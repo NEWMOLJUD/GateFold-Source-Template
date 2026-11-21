@@ -65,6 +65,12 @@ If your site is built (VitePress, MkDocs, Astro, anything that ends in a folder 
 
 The workflow runs `npm ci` when there is a `package-lock.json`, then `npm run build` when it exists, then the deploy. Make the generator write relative links, because the site lives under `/reader/view/<alias>/`.
 
+## Working with an AI agent
+
+The repository is ready for coding agents. [`AGENTS.md`](AGENTS.md) tells any agent how the site is laid out, how to check its work and what it must not do, and [`CLAUDE.md`](CLAUDE.md) brings the same guide into Claude Code, with two skills: `/new-page` adds a page and links it from every navigation, and `/check-site` looks for broken links before you push.
+
+An agent is asked before it deploys or pushes, and is not allowed to read `.env`. Review its changes all the same: a push to `main` is live a moment later.
+
 ## Deploy from your computer
 
 You need [Node.js](https://nodejs.org) 22.18 or newer.

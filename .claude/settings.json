@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run preview)",
+      "Bash(npm run deploy:check)"
+    ],
+    "ask": [
+      "Bash(npm run deploy)",
+      "Bash(node scripts/deploy.mjs:*)",
+      "Bash(git push:*)"
+    ],
+    "deny": [
+      "Read(./.env)"
+    ]
+  }
+}
