@@ -1,0 +1,16 @@
+{
+  "name": "gatefold-source",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A site published to a Gatefold source on every push.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "preview": "node scripts/preview.mjs",
+    "deploy": "node scripts/deploy.mjs",
+    "deploy:check": "node scripts/deploy.mjs --dry-run"
+  }
+}

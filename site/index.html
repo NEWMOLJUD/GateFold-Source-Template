@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ props.title }}</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <strong>{{ props.title }}</strong>
+    <nav>
+      <a href="./">Home</a>
+      <a href="guide/">Guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Your documentation is live</h1>
+    <p class="lead">This page came from the <code>site/</code> folder of your repository. Edit it, push to <code>main</code>, and the new version is here a moment later.</p>
+
+    <h2>Where things are</h2>
+    <p>Every file under <code>site/</code> is published, keeping its subfolders. Links between pages are relative, like the one to the <a href="guide/">guide</a>.</p>
+
+    <h2>Pages that adapt</h2>
+    <p>The title above is not written in this page: it is <code>{% raw %}{{ props.title }}{% endraw %}</code>, read from <code>site/source.json</code>. The <a href="guide/">guide</a> shows what else a page can read.</p>
+  </main>
+
+  <footer>Published with Gatefold.</footer>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guide · {{ props.title }}</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <header>
+    <strong>{{ props.title }}</strong>
+    <nav>
+      <a href="../">Home</a>
+      <a href="./">Guide</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Writing pages</h1>
+    <p class="lead">A page is a plain HTML file. Before delivering it, Gatefold fills in what is between braces.</p>
+
+    <h2>Values</h2>
+    <p>Values come from three places, the later winning: the platform, the <code>props</code> of <code>site/source.json</code>, and the reader's own props.</p>
+<pre><code>{% raw %}&lt;h1&gt;{{ props.title }}&lt;/h1&gt;
+&lt;p&gt;{{ props.team | default: "Everyone" }}&lt;/p&gt;{% endraw %}</code></pre>
+
+    <h2>Conditions and lists</h2>
+<pre><code>{% raw %}{% if props.plan == "gold" %}…{% else %}…{% endif %}
+{% for item in props.notices %}{{ forloop.index }}. {{ item }}{% endfor %}{% endraw %}</code></pre>
+
+    <h2>Not access control</h2>
+    <p>Props personalise a page. Who may open this site is decided in the Gatefold console, never here.</p>
+  </main>
+
+  <footer>Published with Gatefold.</footer>
+</body>
+</html>

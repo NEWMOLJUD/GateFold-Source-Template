@@ -1,0 +1,49 @@
+name: Deploy to Gatefold
+
+# Publishes the site on every push to main, and from the "Run workflow" button.
+# It stays off until the repository variable SOURCE_ACTIVE is "true".
+#
+# Never add `pull_request` here: the API key is an administrator key, and a
+# pull request must not be able to reach it.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# One deploy at a time, and never cut short: a deploy stopped halfway leaves the site half-updated.
+concurrency:
+  group: gatefold-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Publish the site
+    if: vars.SOURCE_ACTIVE == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      # Only for a site with a build of its own: a plain site/ folder skips both steps.
+      - name: Install dependencies
+        if: hashFiles('package-lock.json') != ''
+        run: npm ci
+      - name: Build
+        run: npm run build --if-present
+      - name: Deploy
+        run: npm run deploy
+        env:
+          GATEFOLD_API_KEY: ${{ secrets.GATEFOLD_API_KEY }}
+          # Not secrets, so variables are the natural place; a secret of the same name works too.
+          GATEFOLD_URL: ${{ vars.GATEFOLD_URL || secrets.GATEFOLD_URL }}
+          GATEFOLD_SOURCE: ${{ vars.GATEFOLD_SOURCE || secrets.GATEFOLD_SOURCE }}
+          GATEFOLD_DIR: ${{ vars.GATEFOLD_DIR }}
+          GATEFOLD_PRUNE: ${{ vars.GATEFOLD_PRUNE }}
+          GATEFOLD_PUBLIC: ${{ vars.GATEFOLD_PUBLIC }}
