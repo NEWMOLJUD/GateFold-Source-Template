@@ -1,7 +1,7 @@
 name: Deploy to Gatefold
 
 # Publishes the site on every push to main, and from the "Run workflow" button.
-# It stays off until the repository variable SOURCE_ACTIVE is "true".
+# It does nothing until SOURCE_ACTIVE (a repository variable, or a secret) is "true".
 #
 # Never add `pull_request` here: the API key is an administrator key, and a
 # pull request must not be able to reach it.
@@ -21,23 +21,47 @@ concurrency:
 jobs:
   deploy:
     name: Publish the site
-    if: vars.SOURCE_ACTIVE == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      # The switch is read in a step, not in an `if:` of the job, because a job cannot read a secret
+      # and SOURCE_ACTIVE is often saved as one. The output is "yes" rather than the value itself:
+      # a value that came from a secret is masked in the log.
+      - name: Check the switch
+        id: switch
+        env:
+          SOURCE_ACTIVE: ${{ vars.SOURCE_ACTIVE || secrets.SOURCE_ACTIVE }}
+        run: |
+          value=$(printf '%s' "$SOURCE_ACTIVE" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')
+          if [ "$value" = "true" ]; then
+            echo "active=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice title=Deploy is off::SOURCE_ACTIVE is not \"true\", so nothing was published."
+            {
+              echo "### Deploy is off"
+              echo
+              echo "Nothing was published, because \`SOURCE_ACTIVE\` is not \`true\`."
+              echo
+              echo "Set it under **Settings → Secrets and variables → Actions**, as a repository variable or a repository secret (not inside an Environment), then run this workflow again."
+            } >> "$GITHUB_STEP_SUMMARY"
+          fi
       - uses: actions/checkout@v7
+        if: steps.switch.outputs.active == 'yes'
         with:
           persist-credentials: false
       - uses: actions/setup-node@v7
+        if: steps.switch.outputs.active == 'yes'
         with:
           node-version: 22
       # Only for a site with a build of its own: a plain site/ folder skips both steps.
       - name: Install dependencies
-        if: hashFiles('package-lock.json') != ''
+        if: steps.switch.outputs.active == 'yes' && hashFiles('package-lock.json') != ''
         run: npm ci
       - name: Build
+        if: steps.switch.outputs.active == 'yes'
         run: npm run build --if-present
       - name: Deploy
+        if: steps.switch.outputs.active == 'yes'
         run: npm run deploy
         env:
           GATEFOLD_API_KEY: ${{ secrets.GATEFOLD_API_KEY }}

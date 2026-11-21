@@ -35,7 +35,10 @@ On the **Variables** tab:
 
 **5. Choose who reads it.** A new source is private. In the Gatefold console, tick it on each reader's page, or make it public on the source's page.
 
-From here on, every push to `main` publishes. To pause, set `SOURCE_ACTIVE` to anything other than `true`: the workflow is skipped, and the site stays as it is.
+From here on, every push to `main` publishes. To pause, set `SOURCE_ACTIVE` to anything other than `true`: the workflow still runs, publishes nothing and says **Deploy is off** in its summary, and the site stays as it is.
+
+> [!TIP]
+> If a run says **Deploy is off** although you set `SOURCE_ACTIVE`, it was probably saved inside an *Environment*. It must be a **repository** variable or secret, under **Settings → Secrets and variables → Actions**.
 
 ## Write your site
 
@@ -94,7 +97,7 @@ npm run deploy
 | `GATEFOLD_PRUNE` | Variable | Remove from the source what is not in the folder. | `true` |
 | `GATEFOLD_PUBLIC` | Variable | Create the source open to everyone. Only used when the deploy creates it. | `false` |
 
-`GATEFOLD_URL` and `GATEFOLD_SOURCE` may be secrets instead, if you would rather not show them. `SOURCE_ACTIVE` must be a variable: GitHub cannot switch a job on a secret.
+`GATEFOLD_URL`, `GATEFOLD_SOURCE` and `SOURCE_ACTIVE` may be secrets instead, if you would rather not show them. When both exist, the variable wins.
 
 ## Good to know
 
